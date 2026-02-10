@@ -1,0 +1,5 @@
+.ipynb_checkpoints/
+kali-linux-*/
+Metasploitable2-Linux/
+*.ova
+*.vdi
