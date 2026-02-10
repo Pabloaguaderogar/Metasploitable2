@@ -9,10 +9,35 @@ The goal of this project is to understand:
 - Realistic exploitation workflows
 - Basic defensive hardening techniques
 
+
 All experiments were conducted in an isolated lab environment.
 
 ---
 
-## 📁 Repository Structure
+##  Repository Structure
+
+Each PDF contains:
+- Vulnerability description
+- Enumeration phase
+- Exploitation steps
+- Results and observations
+- (When applicable) mitigation or defense notes
+
+---
+
+## 🧪 Lab Environment
+
+- Attacker: **Kali Linux**
+- Target: **Metasploitable2**
+- Tools: `nmap`, `metasploit`, `netcat`, `enum4linux`, etc.
+
+---
+
+---
+
+##  Notes
+
+- PDFs represent the final, curated documentation.
+- Jupyter notebooks are kept locally and used only during experimentation.
 
 
