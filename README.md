@@ -25,7 +25,7 @@ Each PDF contains:
 
 ---
 
-## 🧪 Lab Environment
+##  Lab Environment
 
 - Attacker: **Kali Linux**
 - Target: **Metasploitable2**
