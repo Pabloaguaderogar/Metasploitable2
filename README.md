@@ -54,4 +54,4 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
 * **Defensa y Mitigación:** * **Principio de Menor Privilegio:** Restringir el acceso anónimo en Samba (`map to guest = never`).
     * **Gestión de Credenciales:** Cambio inmediato de contraseñas por defecto en servicios administrativos.
     * **Patch Management:** Actualización del Kernel para mitigar vulnerabilidades de tipo Race Condition.
-* **📁 [Código del Ransomware y Bitácora](./ataques/04_samba_tomcat/Samba.pdf**
+* **📁 [Código del Ransomware y Bitácora](./ataques/04_samba_tomcat/Samba.pdf)**
