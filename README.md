@@ -1,6 +1,7 @@
 # 🛡️ Metasploitable 2: Vulnerability Analysis & Hardening Lab
-> [!IMPORTANT]
-> **Legal Disclaimer:** This laboratory was performed in a controlled environment for educational purposes only. All activities were authorized and follow ethical hacking guidelines.
+---
+**Legal Disclaimer:** *This laboratory was performed in a controlled environment for educational purposes only. All activities were authorized and follow ethical hacking guidelines.*
+---
 ## 📋 Resumen del Proyecto
 Este repositorio es una bitácora técnica de auditoría sobre un entorno **Metasploitable 2**. No se limita a la explotación, sino que documenta el ciclo completo: **Reconocimiento -> Explotación -> Exfiltración -> Hardening (Defensa) -> Limpieza**.
 
