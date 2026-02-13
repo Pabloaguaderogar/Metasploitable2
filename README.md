@@ -1,39 +1,51 @@
-# 📂 Estructura del Proyecto
-
-```text
-.
-├── 📁 ataques/                        # FASE OFENSIVA: Pentesting
-│   ├── 📁 01_rpc/                     # Vulnerabilidad NFS y RPCBind
-│   │   ├── 📄 Ataque1_rpc.md
-│   │   └── 📄 Ataque1_rpc.pdf
-│   ├── 📁 02_bindshell/               # Shell en puerto 1524
-│   │   ├── 📄 Ataque_2_Bindshell.md
-│   │   └── 📄 Ataque_2_Bindshell.pdf
-│   ├── 📁 03_unrealircd/              # Backdoor Unreal3.2.8.1
-│   │   ├── 📄 Ataque_3_UnreallRCD.md
-│   │   └── 📄 Ataque_3_UnreallRCD.pdf
-│   └── 📁 04_samba/                   # Samba + Tomcat + Dirty COW
-│       ├── 📄 Samba.md
-│       └── 📄 Samba.pdf
-├── 📁 defensa/                        # FASE DEFENSIVA: Blue Team
-│   ├── 📁 01_rpc/                     # Medidas preventivas NFS
-│   │   └── 📄 Defensa1_antes_educerecer_cerrar_NFS.pdf
-│   └── 📁 04_samba/                   # Análisis Post-Mortem y Forense
-│       ├── 📁 md/                     # Assets del informe técnico
-│       │   ├── 🖼️ (Capturas .png)
-│       │   └── 📄 samba_defensa.md
-│       └── 📄 Samba_Forensics.pdf
-├── 📁 evidence/                       # ARTEFACTOS FORENSES
-│   ├── 📦 intrusion.tar.xz
-│   └── 📦 intrusion.zip
-└── 📄 README.md                       # Índice General
-```
 # 🛡️ Metasploitable 2: Vulnerability Analysis & Hardening Lab
 ---
 **Legal Disclaimer:** *This laboratory was performed in a controlled environment for educational purposes only. All activities were authorized and follow ethical hacking guidelines.*
 ---
 ## 📋 Resumen del Proyecto
 Este repositorio es una bitácora técnica de auditoría sobre un entorno **Metasploitable 2**. No se limita a la explotación, sino que documenta el ciclo completo: **Reconocimiento -> Explotación -> Exfiltración -> Hardening (Defensa) -> Limpieza**.
+.
+### 📂 Estructura del Proyecto
+
+📁 **ataques/** # FASE OFENSIVA: Pentesting \
+├── 📁 **01_rpc/** # Vulnerabilidad NFS y RPCBind \
+│   ├── 📄 Ataque1_rpc.md \
+│   └── 📄 Ataque1_rpc.pdf \
+├── 📁 **02_bindshell/** # Shell en puerto 1524 \
+│   ├── 📄 Ataque_2_Bindshell.md \
+│   └── 📄 Ataque_2_Bindshell.pdf \
+├── 📁 **03_unrealircd/** # Backdoor Unreal3.2.8.1 \
+│   ├── 📄 Ataque_3_UnreallRCD.md \
+│   └── 📄 Ataque_3_UnreallRCD.pdf \
+└── 📁 **04_samba/** # Samba + Tomcat + Dirty COW \
+    ├── 📄 Samba.md \
+    └── 📄 Samba.pdf
+
+📁 **defensa/** # FASE DEFENSIVA: Blue Team \
+├── 📁 **01_rpc/** # Medidas preventivas NFS \
+│   └── 📄 Defensa1_antes_educerecer_cerrar_NFS.pdf \
+└── 📁 **04_samba/** # Análisis Post-Mortem y Forense \
+    ├── 📁 **md/** # Assets del informe técnico \
+    │   ├── 🖼️ (Capturas .png) \
+    │   └── 📄 samba_defensa.md \
+    └── 📄 Samba_Forensics.pdf
+
+📁 **evidence/** # ARTEFACTOS FORENSES \
+├── 📦 intrusion.tar.xz \
+└── 📦 intrusion.zip
+
+📄 **README.md** # Índice General
+
+---
+
+### ⚙️ Metodología de Trabajo
+
+Basado en la formación del **Google Cybersecurity Professional Certificate**, este laboratorio documenta un ciclo de seguridad completo:
+
+1. **PCAP Logging:** Captura proactiva de tráfico para garantizar la trazabilidad.
+2. **Análisis Clásico:** Explotación controlada para identificar el impacto real.
+3. **Hardening & Remediation:** Implementación de medidas de endurecimiento.
+4. **Detección en Tiempo Real:** Scripts para identificación de patrones de intrusión.                 # Índice General
 
 ---
 
