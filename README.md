@@ -5,31 +5,31 @@
 ## 📋 Resumen del Proyecto
 Este repositorio es una bitácora técnica de auditoría sobre un entorno **Metasploitable 2**. No se limita a la explotación, sino que documenta el ciclo completo: **Reconocimiento -> Explotación -> Exfiltración -> Hardening (Defensa) -> Limpieza**.
 .
-├── 📁 ataques/                        # FASE OFENSIVA: Explotación y Pentesting
+├── 📁 ataques/                        # FASE OFENSIVA: Pentesting
 │   ├── 📁 01_rpc/                     # Vulnerabilidad NFS y RPCBind
-│   │   ├── 📄 Ataque1_rpc.md          # Write-up técnico
-│   │   └── 📄 Ataque1_rpc.pdf         # Informe formal
-│   ├── 📁 02_bindshell/               # Shell directa en puerto 1524
-│   │   ├── 📄 Ataque_2_Bindshell.md   # Write-up técnico
-│   │   └── 📄 Ataque_2_Bindshell.pdf  # Informe formal
-│   ├── 📁 03_unrealircd/              # Backdoor en Unreal3.2.8.1
-│   │   ├── 📄 Ataque_3_UnreallRCD.md  # Write-up técnico
-│   │   └── 📄 Ataque_3_UnreallRCD.pdf # Informe formal
+│   │   ├── 📄 [Ataque1_rpc.md](./ataques/01_rpc/Ataque1_rpc.md)
+│   │   └── 📄 [Ataque1_rpc.pdf](./ataques/01_rpc/Ataque1_rpc.pdf)
+│   ├── 📁 02_bindshell/               # Shell en puerto 1524
+│   │   ├── 📄 [Ataque_2_Bindshell.md](./ataques/02_bindshell/Ataque_2_Bindshell.md)
+│   │   └── 📄 [Ataque_2_Bindshell.pdf](./ataques/02_bindshell/Ataque_2_Bindshell.pdf)
+│   ├── 📁 03_unrealircd/              # Backdoor Unreal3.2.8.1
+│   │   ├── 📄 [Ataque_3_UnreallRCD.md](./ataques/03_unrealircd/Ataque_3_UnreallRCD.md)
+│   │   └── 📄 [Ataque_3_UnreallRCD.pdf](./ataques/03_unrealircd/Ataque_3_UnreallRCD.pdf)
 │   └── 📁 04_samba/                   # Samba + Tomcat + Dirty COW
-│       ├── 📄 Samba.md                # Write-up técnico
-│       └── 📄 Samba.pdf               # Informe formal
-├── 📁 defensa/                        # FASE DEFENSIVA: Hardening y Forense
-│   ├── 📁 01_rpc/                     # Medidas preventivas para NFS
-│   │   └── 📄 Defensa1_antes...pdf    # Informe de cierre de brecha
+│       ├── 📄 [Samba.md](./ataques/04_samba/Samba.md)
+│       └── 📄 [Samba.pdf](./ataques/04_samba/Samba.pdf)
+├── 📁 defensa/                        # FASE DEFENSIVA: Blue Team
+│   ├── 📁 01_rpc/                     # Medidas preventivas NFS
+│   │   └── 📄 [Defensa1_antes...pdf](./defensa/01_rpc/Defensa1_antes_educerecer_cerrar_NFS.pdf)
 │   └── 📁 04_samba/                   # Análisis Post-Mortem y Forense
-│       ├── 📁 md/                     # Documentación técnica con evidencias
-│       │   ├── 🖼️ (Imágenes .png)      # Capturas de tráfico y logs
-│       │   └── 📄 samba_defensa.md    # Análisis forense detallado (PCAP Analysis)
-│       └── 📄 Samba_Forensics.pdf     # Reporte ejecutivo forense
-├── 📁 evidence/                       # CAPTURAS DE TRÁFICO (PCAP)
-│   ├── 📦 intrusion.tar.xz            # Evidencia original (Formato Linux)
-│   └── 📦 intrusion.zip               # Evidencia original (Formato Windows)
-└── 📄 README.md
+│       ├── 📁 md/                     # Assets del informe técnico
+│       │   ├── 🖼️ (Capturas .png)
+│       │   └── 📄 [samba_defensa.md](./defensa/04_samba/md/samba_defensa.md)
+│       └── 📄 [Samba_Forensics.pdf](./defensa/04_samba/Samba_Forensics.pdf)
+├── 📁 evidence/                       # ARTEFACTOS FORENSES
+│   ├── 📦 [intrusion.tar.xz](./evidence/intrusion.tar.xz)
+│   └── 📦 [intrusion.zip](./evidence/intrusion.zip)
+└── 📄 README.md                       # Índice General
 
 ---
 
