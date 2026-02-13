@@ -4,6 +4,32 @@
 ---
 ## 📋 Resumen del Proyecto
 Este repositorio es una bitácora técnica de auditoría sobre un entorno **Metasploitable 2**. No se limita a la explotación, sino que documenta el ciclo completo: **Reconocimiento -> Explotación -> Exfiltración -> Hardening (Defensa) -> Limpieza**.
+.
+├── 📁 ataques/                        # FASE OFENSIVA: Explotación y Pentesting
+│   ├── 📁 01_rpc/                     # Vulnerabilidad NFS y RPCBind
+│   │   ├── 📄 Ataque1_rpc.md          # Write-up técnico
+│   │   └── 📄 Ataque1_rpc.pdf         # Informe formal
+│   ├── 📁 02_bindshell/               # Shell directa en puerto 1524
+│   │   ├── 📄 Ataque_2_Bindshell.md   # Write-up técnico
+│   │   └── 📄 Ataque_2_Bindshell.pdf  # Informe formal
+│   ├── 📁 03_unrealircd/              # Backdoor en Unreal3.2.8.1
+│   │   ├── 📄 Ataque_3_UnreallRCD.md  # Write-up técnico
+│   │   └── 📄 Ataque_3_UnreallRCD.pdf # Informe formal
+│   └── 📁 04_samba/                   # Samba + Tomcat + Dirty COW
+│       ├── 📄 Samba.md                # Write-up técnico
+│       └── 📄 Samba.pdf               # Informe formal
+├── 📁 defensa/                        # FASE DEFENSIVA: Hardening y Forense
+│   ├── 📁 01_rpc/                     # Medidas preventivas para NFS
+│   │   └── 📄 Defensa1_antes...pdf    # Informe de cierre de brecha
+│   └── 📁 04_samba/                   # Análisis Post-Mortem y Forense
+│       ├── 📁 md/                     # Documentación técnica con evidencias
+│       │   ├── 🖼️ (Imágenes .png)      # Capturas de tráfico y logs
+│       │   └── 📄 samba_defensa.md    # Análisis forense detallado (PCAP Analysis)
+│       └── 📄 Samba_Forensics.pdf     # Reporte ejecutivo forense
+├── 📁 evidence/                       # CAPTURAS DE TRÁFICO (PCAP)
+│   ├── 📦 intrusion.tar.xz            # Evidencia original (Formato Linux)
+│   └── 📦 intrusion.zip               # Evidencia original (Formato Windows)
+└── 📄 README.md
 
 ---
 
