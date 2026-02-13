@@ -57,3 +57,42 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
     * **Gestión de Credenciales:** Cambio inmediato de contraseñas por defecto en servicios administrativos.
     * **Patch Management:** Actualización del Kernel para mitigar vulnerabilidades de tipo Race Condition.
 * **📁 [Código del Ransomware y Bitácora](./ataques/04_samba/Samba.pdf)**
+### 0.5 ###  Análisis Forense del Caso 04 (Blue Team Focus)
+Para este análisis se utilizó el archivo `intrusion.pcap` (73 MB). El reto principal consistió en filtrar el ruido de red (tráfico HTTP de usuarios legítimos, ARP y broadcast) para aislar la actividad del atacante.
+
+
+
+#### A. Mapeo de Vectores (Identificación del Atacante .102)
+Tras aplicar filtros de exclusión, se identificó la secuencia de escaneo y la apertura del canal C2 (4444).
+
+| No. | Time | Src | Dst | Puerto | Stream |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 5160 | 201.2 | .101 | .102 | 8180 [S,A] | 2170 |
+| 5185 | 201.2 | .101 | .102 | 80 [S,A] | 2173 |
+| **7303** | **655.2** | **.102** | **.101** | **4444 [S,A]** | **2493** |
+
+#### B. Evidencia de Compromiso en Tomcat
+Identificación del acceso administrativo y la inyección del payload mediante tráfico HTTP.
+
+| No. | Time | Len | Src→Dst | Status / Auth | Detalle Forense |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 6525 | 456.3 | 480 | .102→.101 | **tomcat:tomcat** | Creds. Default. |
+| 6526 | 456.3 | 8868 | .101→.102 | **200 OK** | **ACCESO OK** |
+| **7259** | **649.7** | **557** | **POST (V1)*** | **SUBIDA .WAR** |
+
+#### C. Deep Packet Inspection (DPI)
+El análisis del **Stream 2493** confirmó la descarga del código fuente del exploit y su compilación inmediata con `gcc` dentro de la shell. La detección de estos comandos en texto claro confirma la actividad maliciosa post-explotación y la escalada a root.
+
+#### D. Conclusión y Recomendaciones Ejecutivas
+El host fue comprometido debido a credenciales débiles y un kernel desactualizado. Se recomienda:
+1. **Contención:** Aislamiento del host y purga de directorios en `/webapps/`.
+2. **Hardening:** Cambio de contraseñas de Tomcat y restricción de acceso al panel por IP.
+3. **Remediación:** Actualización urgente del Kernel para mitigar vulnerabilidades de Race Condition.
+
+* **📁 [Informe Forense PDF](./defensa/04_samba/Samba_Forensics.pdf)** 
+* **📦 Evidencia PCAP (Real Noise):** **[Descargar .tar.xz (Linux)](./evidence/intrusion.tar.xz)** | **[Descargar .zip (Windows)](./evidence/intrusion.zip)**
+
+---
+
+## 🚀 Próximos Pasos: Detección en Tiempo Real
+Como fase final del laboratorio, se desarrollará un script en Python (Scapy) para monitorizar el tráfico y generar alertas ante peticiones POST administrativas o conexiones sospechosas al puerto 4444.
