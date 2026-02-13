@@ -15,7 +15,7 @@ Este repositorio es una bitácora técnica de auditoría sobre un entorno **Meta
 * **Explotación:** 1. Montaje remoto del filesystem: `mount -t nfs 192.168.56.101:/ /mnt/nfsroot`.
     2. Inyección de persistencia: Edición directa de `/etc/passwd` y `/etc/shadow` desde la máquina atacante para crear el usuario `hack` con **UID 0** (Root) y sin contraseña.
 * **Exfiltración:** Uso de `tar` para empaquetar `/home/msfadmin` y transferencia vía servidor HTTP temporal en Python.
-* **📁 [Informe Técnico Detallado](./ataques/01_rpc/Ataque1_rpc.pdf)**
+* **📁 [Informe Técnico Detallado](./ataques/01_rpc/Ataque1_rpc.md)**
 
 ### 02. Bindshell en Puerto 1524: De la Explotación al Hardening
 * **Identificación:** Detección de `ingreslock` en el puerto **1524**.
@@ -25,7 +25,7 @@ Este repositorio es una bitácora técnica de auditoría sobre un entorno **Meta
     1. **Contención Inmediata:** Bloqueo del puerto mediante `iptables -A INPUT -p tcp --dport 1524 -j DROP`.
     2. **Investigación de Procesos:** Uso de `ss -lntp` y `ps -fp <PID>` para identificar que el proceso era lanzado por el super-servidor `xinetd`.
     3. **Remediación Definitiva:** Desactivación del servicio en `/etc/xinetd.d/` y reinicio del demonio para eliminar el vector de ataque permanentemente.
-* **📁 [Informe Técnico Detallado](./ataques/02_bindshell/Ataque_2_Bindshell.pdf)**
+* **📁 [Informe Técnico Detallado](./ataques/02_bindshell/Ataque_2_Bindshell.md)**
 
 ---
 
@@ -44,7 +44,7 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
     2. **Cracking de Credenciales:** Uso de la herramienta `unshadow` para combinar ambos ficheros y preparación para ataque de fuerza bruta offline con **John the Ripper**.
 * **Hardening y Lección Aprendida:** 1. Se demostró que un Firewall (`iptables`) reduce la superficie de ataque externa pero no elimina la vulnerabilidad intrínseca del software. 
     2. **Recomendación:** Actualización inmediata a una versión no comprometida o deshabilitación total del servicio si no es esencial para el negocio.
-* **📁 [Informe Técnico Detallado](./ataques/03_unrealircd/Ataque_3_UnreallRCD.pdf)**
+* **📁 [Informe Técnico Detallado](./ataques/03_unrealircd/Ataque_3_UnreallRCD.md)**
 
 ### 04. Samba & Tomcat: De la Exposición de Archivos al Ransomware Real
 * **Fase 1: Exposición SMB:** Se detectó un servicio Samba (3.0.20) con login anónimo permitido. Se verificó capacidad de **Escritura (R/W)** en el directorio `/tmp`, lo que permite el staging de malware y scripts de escalada.
@@ -56,7 +56,7 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
 * **Defensa y Mitigación:** * **Principio de Menor Privilegio:** Restringir el acceso anónimo en Samba (`map to guest = never`).
     * **Gestión de Credenciales:** Cambio inmediato de contraseñas por defecto en servicios administrativos.
     * **Patch Management:** Actualización del Kernel para mitigar vulnerabilidades de tipo Race Condition.
-* **📁 [Código del Ransomware y Bitácora](./ataques/04_samba/Samba.pdf)**
+* **📁 [Código del Ransomware y Bitácora](./ataques/04_samba/Samba.md)**
 ### 0.5 ###  Análisis Forense del Caso 04 (Blue Team Focus)
 Para este análisis se utilizó el archivo `intrusion.pcap` (73 MB). El reto principal consistió en filtrar el ruido de red (tráfico HTTP de usuarios legítimos, ARP y broadcast) para aislar la actividad del atacante.
 
@@ -89,7 +89,7 @@ El host fue comprometido debido a credenciales débiles y un kernel desactualiza
 2. **Hardening:** Cambio de contraseñas de Tomcat y restricción de acceso al panel por IP.
 3. **Remediación:** Actualización urgente del Kernel para mitigar vulnerabilidades de Race Condition.
 
-* **📁 [Informe Forense PDF](./defensa/04_samba/Samba_Forensics.pdf)** 
+* **📁 [Informe Forense PDF](./defensa/04_samba/Samba_Forensics.md)** 
 * **📦 Evidencia PCAP (Real Noise):** **[Descargar .tar.xz (Linux)](./evidence/intrusion.tar.xz)** | **[Descargar .zip (Windows)](./evidence/intrusion.zip)**
 
 ---
