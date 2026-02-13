@@ -27,7 +27,7 @@
 │   ├── 📦 intrusion.tar.xz
 │   └── 📦 intrusion.zip
 └── 📄 README.md                       # Índice General
-
+```
 # 🛡️ Metasploitable 2: Vulnerability Analysis & Hardening Lab
 ---
 **Legal Disclaimer:** *This laboratory was performed in a controlled environment for educational purposes only. All activities were authorized and follow ethical hacking guidelines.*
