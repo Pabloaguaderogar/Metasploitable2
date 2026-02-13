@@ -27,7 +27,7 @@ Este repositorio es una bitácora técnica de auditoría sobre un entorno **Meta
 └── 📁 **04_samba/** # Análisis Post-Mortem y Forense \
     ├── 📁 **md/** # Assets del informe técnico \
     │   ├── 🖼️ (Capturas .png) \
-    │   └── 📄 samba_defensa.md \
+    │   └── 📄 Samba_Forensics.md \
     └── 📄 Samba_Forensics.pdf
 
 📁 **evidence/** # ARTEFACTOS FORENSES \
