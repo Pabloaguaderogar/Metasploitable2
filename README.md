@@ -99,7 +99,7 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
     * **Gestión de Credenciales:** Cambio inmediato de contraseñas por defecto en servicios administrativos.
     * **Patch Management:** Actualización del Kernel para mitigar vulnerabilidades de tipo Race Condition.
 * **📁 [Código del Ransomware y Bitácora](./ataques/04_samba/Samba.md)**
-### 0.5 ###  Análisis Forense del Caso 04 (Blue Team Focus)
+### 0.5 Análisis Forense del Caso 04 (Blue Team Focus)
 Para este análisis se utilizó el archivo `intrusion.pcap` (73 MB). El reto principal consistió en filtrar el ruido de red (tráfico HTTP de usuarios legítimos, ARP y broadcast) para aislar la actividad del atacante.
 
 
