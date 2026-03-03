@@ -593,3 +593,559 @@ El análisis forense confirma que el host `192.168.56.101` fue comprometido tota
 Para prevenir futuros incidentes similares, se recomienda implementar reglas de detección en el IDS/IPS (Snort/Suricata) basadas en los indicadores de compromiso (IOCs) hallados:  
 * **Regla de Red:** Alertar sobre cualquier tráfico TCP saliente hacia puertos no estándar (como 4444).  
 * **Regla de Aplicación:** Alertar sobre peticiones `POST` hacia `/manager/html/upload` que contengan cabeceras de archivos binarios (Magic Bytes de ZIP/WAR).  
+
+# Análisis dinámico. 
+Mediante un script en python básico, obtenemos el hash y subimos el archivo a virustotal para analizarlo (esto se puede hacer manualmente pero intentamos centrarnos en la automatización)
+```bash
+import requests
+import hashlib
+import sys
+
+# Configuración
+API_KEY = 'API_KEY'
+FILE_PATH = 'cow'
+
+def get_sha256(file):
+    sha256_hash = hashlib.sha256()
+    with open(file, "rb") as f:
+        for byte_block in iter(lambda: f.read(4096), b""):
+            sha256_hash.update(byte_block)
+    return sha256_hash.hexdigest()
+
+def check_vt_hash(file_hash):
+    url = f"https://www.virustotal.com/api/v3/files/{file_hash}"
+    headers = {"x-apikey": API_KEY}
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        stats = response.json()['data']['attributes']['last_analysis_stats']
+        print(f"[!] El hash ya existe en VT. Detecciones: {stats['malicious']} motores lo marcan como malicioso.")
+    elif response.status_code == 404:
+        print("[?] El hash no está en VT. Procediendo a subir el binario para análisis dinámico...")
+        upload_file(FILE_PATH)
+    else:
+        print(f"[-] Error al conectar con VT: {response.status_code}")
+
+def upload_file(file):
+    url = "https://www.virustotal.com/api/v3/files"
+    headers = {"x-apikey": API_KEY}
+    with open(file, "rb") as f:
+        files = {"file": (file, f)}
+        response = requests.post(url, headers=headers, files=files)
+    
+    if response.status_code == 200:
+        print("[+] Archivo subido con éxito. Revisa el panel de VirusTotal para ver el sandbox (Behavior).")
+    else:
+        print(f"[-] Error al subir archivo: {response.text}")
+    
+    current_hash = get_sha256(FILE_PATH)
+    print(f"[*] Analizando: {FILE_PATH}")
+    print(f"[*] Hash SHA-256: {current_hash}")
+    check_vt_hash(current_hash)
+```
+
+
+
+```python
+import requests
+import pandas as pd
+
+
+API_KEY = '###'
+FILE_HASH = '09067440ae83d09af734cb83961f05de91a1bb788beac82b692b7514811de585'
+
+# Usamos el endpoint de summary para una visión general o el de reports para detalle
+url = f"https://www.virustotal.com/api/v3/files/{FILE_HASH}/behaviour_summary"
+headers = {"x-apikey": API_KEY}
+
+response = requests.get(url, headers=headers)
+if response.status_code == 200:
+    full_data = response.json()
+    print("Secciones disponibles en este análisis:")
+    print(full_data.keys())
+```
+
+    Secciones disponibles en este análisis:
+    dict_keys(['data'])
+
+
+
+```python
+    print("Secciones disponibles en este análisis:")
+    print(full_data['data'].keys())
+```
+
+    Secciones disponibles en este análisis:
+    dict_keys(['files_written', 'files_dropped', 'tags', 'mitre_attack_techniques', 'command_executions', 'text_highlighted', 'signature_matches', 'files_opened', 'memory_dumps', 'mbc', 'processes_tree', 'processes_created', 'attack_techniques'])
+
+
+**Para este análisis se ha usado la documentación aportada en: [URL: https://docs.virustotal.com/reference/file-behaviour-summary]
+
+
+```python
+import pandas as pd
+
+data = response.json()['data']
+rows = []
+
+# --- 1. MITRE ATT&CK (Lista de diccionarios) ---
+for tech in data.get('mitre_attack_techniques', []):
+    rows.append({
+        'Categoría': 'MITRE ATT&CK',
+        'ID/Nombre': tech.get('id'),
+        'Detalle': tech.get('signature_description'),
+        'Criticidad': tech.get('severity', 'UNKNOWN').upper()
+    })
+
+# --- 2. SIGNATURE MATCHES (Lista de diccionarios) ---
+for sig in data.get('signature_matches', []):
+    rows.append({
+        'Categoría': 'Firma Detectada',
+        'ID/Nombre': sig.get('name'),
+        'Detalle': sig.get('description', 'Sin descripción'),
+        'Criticidad': 'ALTA' 
+    })
+
+# --- 3. LISTAS DE STRINGS (Files, Tags, Commands, etc.) ---
+campos_strings = {
+    'files_written': 'Archivo Escrito',
+    'files_dropped': 'Archivo Creado',
+    'tags': 'Tag VT',
+    'command_executions': 'Comando Ejecutado',
+    'text_highlighted': 'Texto Sospechoso',
+    'files_opened': 'Archivo Abierto'
+}
+
+for clave, cat in campos_strings.items():
+    for item in data.get(clave, []):
+        # Para estas listas, el 'item' es el string directamente
+        rows.append({
+            'Categoría': cat,
+            'ID/Nombre': 'N/A',
+            'Detalle': item,
+            'Criticidad': 'INFORMATIVA'
+        })
+
+# --- CREACIÓN Y LIMPIEZA DEL DATAFRAME ---
+df_forense = pd.DataFrame(rows)
+df_forense.to_csv('cow_vt.csv')
+```
+
+
+```python
+firmas = df_forense[df_forense['Categoría'] == 'Firma Detectada']
+```
+
+
+```python
+firmas
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Categoría</th>
+      <th>ID/Nombre</th>
+      <th>Detalle</th>
+      <th>Criticidad</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4</th>
+      <td>Firma Detectada</td>
+      <td>map or unmap memory on Linux</td>
+      <td>host-interaction/memory</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Firma Detectada</td>
+      <td>write file on Linux</td>
+      <td>host-interaction/file-system/write</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Firma Detectada</td>
+      <td>get file attributes</td>
+      <td>host-interaction/file-system/meta</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Firma Detectada</td>
+      <td>get current PID on Linux</td>
+      <td>host-interaction/process</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Firma Detectada</td>
+      <td>create process on Linux</td>
+      <td>host-interaction/process/create</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Firma Detectada</td>
+      <td>read file on Linux</td>
+      <td>host-interaction/file-system/read</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Firma Detectada</td>
+      <td>create thread</td>
+      <td>host-interaction/thread/create</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Firma Detectada</td>
+      <td>terminate process via kill</td>
+      <td>host-interaction/process/terminate</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Firma Detectada</td>
+      <td>check file permission on Linux</td>
+      <td>host-interaction/file-system</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Firma Detectada</td>
+      <td>reads_files</td>
+      <td>Reads files from disk</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Firma Detectada</td>
+      <td>drops_files</td>
+      <td>Drops files onto disk</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Firma Detectada</td>
+      <td>writes_files</td>
+      <td>Writes to files on disk</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Firma Detectada</td>
+      <td>None</td>
+      <td>Malicious sample detected (through community Y...</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Firma Detectada</td>
+      <td>None</td>
+      <td>Uses the "uname" system call to query kernel v...</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>Firma Detectada</td>
+      <td>None</td>
+      <td>Executes commands using a shell command-line i...</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>Firma Detectada</td>
+      <td>None</td>
+      <td>Executes the "systemctl" command used for cont...</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>Firma Detectada</td>
+      <td>None</td>
+      <td>Yara signature match</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>Firma Detectada</td>
+      <td>None</td>
+      <td>Sample and/or dropped files contains symbols w...</td>
+      <td>ALTA</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>Firma Detectada</td>
+      <td>None</td>
+      <td>Classification label</td>
+      <td>ALTA</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+creados = df_forense[df_forense['Categoría'] == 'Archivo Escrito']
+```
+
+
+```python
+creados
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Categoría</th>
+      <th>ID/Nombre</th>
+      <th>Detalle</th>
+      <th>Criticidad</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>23</th>
+      <td>Archivo Escrito</td>
+      <td>N/A</td>
+      <td>/dev/tty</td>
+      <td>INFORMATIVA</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>Archivo Escrito</td>
+      <td>N/A</td>
+      <td>/dev/ptmx</td>
+      <td>INFORMATIVA</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>Archivo Escrito</td>
+      <td>N/A</td>
+      <td>/dev/pts/0</td>
+      <td>INFORMATIVA</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>Archivo Escrito</td>
+      <td>N/A</td>
+      <td>/tmp/passwd.bak</td>
+      <td>INFORMATIVA</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>Archivo Escrito</td>
+      <td>N/A</td>
+      <td>/var/log/auth.log.1.gz</td>
+      <td>INFORMATIVA</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>Archivo Escrito</td>
+      <td>N/A</td>
+      <td>/var/log/kern.log.1.gz</td>
+      <td>INFORMATIVA</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+df_forense.info()
+```
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 76 entries, 0 to 75
+    Data columns (total 4 columns):
+     #   Column      Non-Null Count  Dtype 
+    ---  ------      --------------  ----- 
+     0   Categoría   76 non-null     object
+     1   ID/Nombre   69 non-null     object
+     2   Detalle     76 non-null     object
+     3   Criticidad  76 non-null     object
+    dtypes: object(4)
+    memory usage: 2.5+ KB
+
+
+
+```python
+prueba = df_forense.groupby(['Categoría', 'Criticidad']).size()
+print (prueba)
+```
+
+    Categoría          Criticidad          
+    Archivo Abierto    INFORMATIVA             38
+    Archivo Creado     INFORMATIVA              2
+    Archivo Escrito    INFORMATIVA              6
+    Comando Ejecutado  INFORMATIVA              5
+    Firma Detectada    ALTA                    19
+    MITRE ATT&CK       IMPACT_SEVERITY_INFO     4
+    Tag VT             INFORMATIVA              1
+    Texto Sospechoso   INFORMATIVA              1
+    dtype: int64
+
+
+
+```python
+attack = df_forense[df_forense['Categoría'] == 'MITRE ATT&CK']
+```
+
+
+```python
+attack
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Categoría</th>
+      <th>ID/Nombre</th>
+      <th>Detalle</th>
+      <th>Criticidad</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>MITRE ATT&amp;CK</td>
+      <td>T1064</td>
+      <td>Executes commands using a shell command-line i...</td>
+      <td>IMPACT_SEVERITY_INFO</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>MITRE ATT&amp;CK</td>
+      <td>T1543.002</td>
+      <td>Executes the "systemctl" command used for cont...</td>
+      <td>IMPACT_SEVERITY_INFO</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>MITRE ATT&amp;CK</td>
+      <td>T1036</td>
+      <td>Sample and/or dropped files symbols with suspi...</td>
+      <td>IMPACT_SEVERITY_INFO</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>MITRE ATT&amp;CK</td>
+      <td>T1518.001</td>
+      <td>Uses the "uname" system call to query kernel v...</td>
+      <td>IMPACT_SEVERITY_INFO</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+import pandas as pd
+
+# 1. Filtro de Memoria (Evidencias de la explotación de la vulnerabilidad)
+# Buscamos mmap (mapeo), ptrace (control de procesos) y manipulación de páginas/direcciones
+evidencias_memoria = df_forense[df_forense['Detalle'].str.contains('mmap|ptrace|memory|page|address|kernel', case=False, na=False)]
+
+# 2. Filtro de Archivos (Evidencias del impacto en el sistema)
+# Buscamos acceso a archivos sensibles, directorios temporales y copias de seguridad
+evidencias_archivos = df_forense[df_forense['Detalle'].str.contains('/etc/passwd|/tmp/|backup|shadow', case=False, na=False)]
+
+print(f"Total evidencias de Memoria: {len(evidencias_memoria)}")
+print(f"Total evidencias de Archivos: {len(evidencias_archivos)}")
+
+# Mostramos un resumen combinado
+print("\n--- TOP EVIDENCIAS DE MEMORIA ---")
+print(evidencias_memoria['Detalle'].unique()[:5])
+
+print("\n--- TOP EVIDENCIAS DE ARCHIVOS ---")
+print(evidencias_archivos['Detalle'].unique()[:5])
+```
+
+    Total evidencias de Memoria: 5
+    Total evidencias de Archivos: 3
+    
+    --- TOP EVIDENCIAS DE MEMORIA ---
+    ['Uses the "uname" system call to query kernel version information (possible evasion)'
+     'host-interaction/memory' '/proc/sys/kernel/ngroups_max'
+     '/proc/sys/kernel/osrelease']
+    
+    --- TOP EVIDENCIAS DE ARCHIVOS ---
+    ['/tmp/passwd.bak' '/etc/passwd']
+
+
+# Conclusiones OSINT
+Tras este análisis dinámico, podemos ver que el binario no solo está categorizado como de impacto severo, sino que analiza cual es el kernel y ha generado dos archivos, un `passwd.bak`de respaldo para borrar el rastro (una copia del original) y un `passwd`nuevo probablemente con un usario root, con lo que la escalada llega a su punto álgido ganando privilegios de sistema.
+# Resumen del laboratorio
+Tras realizar las pruebas en el laboratorio, hemos confirmado que el ataque no fue un simple intento de acceso, sino un esfuerzo sofisticado por tomar el control total del servidor.
+
+* El atacante primero "estudió" el terreno: Antes de actuar, el virus preguntó al sistema qué versión exacta de Linux estaba usando (comando uname). Esto lo hacen los atacantes para asegurarse de que su "llave maestra" va a funcionar en esa cerradura específica.
+
+* Ataque directo a la memoria: Hemos detectado que el virus intentó manipular la memoria del sistema. No se limitó a borrar archivos, sino que intentó engañar al ordenador para que le diera permisos de administrador que no debería tener.
+
+* El sistema capturó el momento exacto en el que el atacante intentó modificar el archivo donde se guardan las contraseñas del servidor (/etc/passwd). Al fallar o como medida de seguridad, el virus dejó una copia de seguridad sospechosa en una carpeta temporal (/tmp/passwd.bak).
+
+* Veredicto: Gracias al filtro de ruido que creamos, pudimos ignorar la actividad normal de los usuarios y ver claramente estas acciones maliciosas. El ataque fue clasificado como Crítico porque buscaba el control total de la máquina.
