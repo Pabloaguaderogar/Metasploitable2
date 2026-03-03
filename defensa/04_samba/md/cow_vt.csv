@@ -1,0 +1,77 @@
+,Categoría,ID/Nombre,Detalle,Criticidad
+0,MITRE ATT&CK,T1064,Executes commands using a shell command-line interpreter,IMPACT_SEVERITY_INFO
+1,MITRE ATT&CK,T1543.002,"Executes the ""systemctl"" command used for controlling the systemd system and service manager",IMPACT_SEVERITY_INFO
+2,MITRE ATT&CK,T1036,Sample and/or dropped files symbols with suspicious names,IMPACT_SEVERITY_INFO
+3,MITRE ATT&CK,T1518.001,"Uses the ""uname"" system call to query kernel version information (possible evasion)",IMPACT_SEVERITY_INFO
+4,Firma Detectada,map or unmap memory on Linux,host-interaction/memory,ALTA
+5,Firma Detectada,write file on Linux,host-interaction/file-system/write,ALTA
+6,Firma Detectada,get file attributes,host-interaction/file-system/meta,ALTA
+7,Firma Detectada,get current PID on Linux,host-interaction/process,ALTA
+8,Firma Detectada,create process on Linux,host-interaction/process/create,ALTA
+9,Firma Detectada,read file on Linux,host-interaction/file-system/read,ALTA
+10,Firma Detectada,create thread,host-interaction/thread/create,ALTA
+11,Firma Detectada,terminate process via kill,host-interaction/process/terminate,ALTA
+12,Firma Detectada,check file permission on Linux,host-interaction/file-system,ALTA
+13,Firma Detectada,reads_files,Reads files from disk,ALTA
+14,Firma Detectada,drops_files,Drops files onto disk,ALTA
+15,Firma Detectada,writes_files,Writes to files on disk,ALTA
+16,Firma Detectada,,Malicious sample detected (through community Yara rule),ALTA
+17,Firma Detectada,,"Uses the ""uname"" system call to query kernel version information (possible evasion)",ALTA
+18,Firma Detectada,,Executes commands using a shell command-line interpreter,ALTA
+19,Firma Detectada,,"Executes the ""systemctl"" command used for controlling the systemd system and service manager",ALTA
+20,Firma Detectada,,Yara signature match,ALTA
+21,Firma Detectada,,Sample and/or dropped files contains symbols with suspicious names,ALTA
+22,Firma Detectada,,Classification label,ALTA
+23,Archivo Escrito,N/A,/dev/tty,INFORMATIVA
+24,Archivo Escrito,N/A,/dev/ptmx,INFORMATIVA
+25,Archivo Escrito,N/A,/dev/pts/0,INFORMATIVA
+26,Archivo Escrito,N/A,/tmp/passwd.bak,INFORMATIVA
+27,Archivo Escrito,N/A,/var/log/auth.log.1.gz,INFORMATIVA
+28,Archivo Escrito,N/A,/var/log/kern.log.1.gz,INFORMATIVA
+29,Archivo Creado,N/A,"{'path': '/tmp/passwd.bak', 'sha256': '60576324ad112169318382032b514e813d569ba664e298c7079dcf543a18f52c', 'type': 'TEXT', 'process_name': '/tmp/sample', 'process_id': '4984'}",INFORMATIVA
+30,Archivo Creado,N/A,"{'path': '/var/log/auth.log.1.gz', 'sha256': '44a3bab2c338e3bca24c00f7c3da1301eb4a5a889f1c667cc781e1bdacd3b9e7', 'type': 'GZIP', 'process_name': '/bin/gzip', 'process_id': '4950'}",INFORMATIVA
+31,Tag VT,N/A,DETECT_DEBUG_ENVIRONMENT,INFORMATIVA
+32,Comando Ejecutado,N/A,sh -c /usr/lib/rsyslog/rsyslog-rotate logrotate_script /var/log/syslog,INFORMATIVA
+33,Comando Ejecutado,N/A,/usr/lib/rsyslog/rsyslog-rotate,INFORMATIVA
+34,Comando Ejecutado,N/A,systemctl kill -s HUP rsyslog.service,INFORMATIVA
+35,Comando Ejecutado,N/A,/bin/gzip,INFORMATIVA
+36,Comando Ejecutado,N/A,sh -c /usr/lib/rsyslog/rsyslog-rotate logrotate_script /var/log/mail.info/var/log/mail.warn/var/log/mail.err/var/log/mail.log/var/log/daemon.log/var/log/kern.log/var/log/auth.log/var/log/user.log/var/log/lpr.log/var/log/cron.log/var/log/debug/var/log/messages,INFORMATIVA
+37,Texto Sospechoso,N/A,,INFORMATIVA
+38,Archivo Abierto,N/A,/root/.Xdefaults-laptop,INFORMATIVA
+39,Archivo Abierto,N/A,/etc/X11/app-defaults/XTerm,INFORMATIVA
+40,Archivo Abierto,N/A,/dev/tty,INFORMATIVA
+41,Archivo Abierto,N/A,/dev/ptmx,INFORMATIVA
+42,Archivo Abierto,N/A,/usr/share/fonts,INFORMATIVA
+43,Archivo Abierto,N/A,/usr/local/share/fonts/.uuid,INFORMATIVA
+44,Archivo Abierto,N/A,/usr/local/share/fonts,INFORMATIVA
+45,Archivo Abierto,N/A,/root/.local/share/fonts/.uuid,INFORMATIVA
+46,Archivo Abierto,N/A,/root/.fonts/.uuid,INFORMATIVA
+47,Archivo Abierto,N/A,/root/.XCompose,INFORMATIVA
+48,Archivo Abierto,N/A,/lib/terminfo/x/xterm,INFORMATIVA
+49,Archivo Abierto,N/A,/dev/pts/0,INFORMATIVA
+50,Archivo Abierto,N/A,/etc/group,INFORMATIVA
+51,Archivo Abierto,N/A,/etc/passwd,INFORMATIVA
+52,Archivo Abierto,N/A,/proc/sys/kernel/ngroups_max,INFORMATIVA
+53,Archivo Abierto,N/A,/etc/shells,INFORMATIVA
+54,Archivo Abierto,N/A,/lib/systemd/tls/avx512_1/libc.so.6,INFORMATIVA
+55,Archivo Abierto,N/A,/lib/systemd/tls/avx512_1/x86_64/libc.so.6,INFORMATIVA
+56,Archivo Abierto,N/A,/lib/systemd/tls/haswell/avx512_1/libc.so.6,INFORMATIVA
+57,Archivo Abierto,N/A,/lib/systemd/tls/haswell/avx512_1/x86_64/libc.so.6,INFORMATIVA
+58,Archivo Abierto,N/A,/lib/systemd/tls/haswell/libc.so.6,INFORMATIVA
+59,Archivo Abierto,N/A,/lib/systemd/tls/haswell/x86_64/libc.so.6,INFORMATIVA
+60,Archivo Abierto,N/A,/proc/1/environ,INFORMATIVA
+61,Archivo Abierto,N/A,/proc/1/sched,INFORMATIVA
+62,Archivo Abierto,N/A,/proc/4953/stat,INFORMATIVA
+63,Archivo Abierto,N/A,/proc/cmdline,INFORMATIVA
+64,Archivo Abierto,N/A,/proc/filesystems,INFORMATIVA
+65,Archivo Abierto,N/A,/proc/self/stat,INFORMATIVA
+66,Archivo Abierto,N/A,/proc/sys/kernel/osrelease,INFORMATIVA
+67,Archivo Abierto,N/A,/run/systemd/container,INFORMATIVA
+68,Archivo Abierto,N/A,/sys/firmware/efi/efivars/SystemdOptions-8cf2644b-4b0b-428f-9387-6d876050dc67,INFORMATIVA
+69,Archivo Abierto,N/A,/tmp/passwd.bak,INFORMATIVA
+70,Archivo Abierto,N/A,/usr/lib/i386-linux-gnu/libc-2.31.so,INFORMATIVA
+71,Archivo Abierto,N/A,/usr/lib/i386-linux-gnu/libcrypt.so.1.1.0,INFORMATIVA
+72,Archivo Abierto,N/A,/usr/lib/i386-linux-gnu/libpthread-2.31.so,INFORMATIVA
+73,Archivo Abierto,N/A,/usr/lib/rsyslog/rsyslog-rotate,INFORMATIVA
+74,Archivo Abierto,N/A,/var/log/auth.log.1,INFORMATIVA
+75,Archivo Abierto,N/A,/var/log/kern.log.1,INFORMATIVA

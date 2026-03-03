@@ -28,11 +28,12 @@ Este repositorio es una bitácora técnica de auditoría sobre un entorno **Meta
     ├── 📁 **md/** # Assets del informe técnico \
     │   ├── 🖼️ (Capturas .png) \
     │   └── 📄 Samba_Forensics.md \
+    ├── 📊 **cow_vt.csv** # Evidencia OSINT VirusTotal \
     └── 📄 Samba_Forensics.pdf
 
 📁 **evidence/** # ARTEFACTOS FORENSES \
 ├── 📦 intrusion.tar.xz \
-└── 📦 intrusion.zip
+└── 📦 intrusion.zip \
 
 📄 **README.md** # Índice General
 
@@ -93,7 +94,7 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
 * **Fase 2: Pivotaje a Tomcat:** Mediante fuerza bruta de credenciales por defecto, se obtuvo acceso al panel de gestión de **Apache Tomcat/5.5** (`tomcat:tomcat`).
 * **Fase 3: Intrusión:** Despliegue de un archivo `.war` malicioso generado con `msfvenom` para obtener una shell reversa.
 * **Fase 4: Escalada de Privilegios (Dirty COW):** * Uso del exploit `CVE-2016-5195` (Dirty COW) para sobrescribir el archivo `/etc/passwd`.
-    * Creación de un usuario root temporal (`firefart`) y posterior persistencia mediante un **SUID Wrapper** en C compilado *in-situ*.
+    * Creación de un usuario root temporal (`firefart`) y posterior persistencia mediante un **SUID Wrapper en C** compilado *in-situ*.
 * **Fase 5: Simulación de Ransomware:** Ejecución de un script Bash que automatiza el cifrado de archivos mediante `OpenSSL` (AES-256-CBC), demostrando el impacto real de una intrusión no detectada.
 * **Defensa y Mitigación:** * **Principio de Menor Privilegio:** Restringir el acceso anónimo en Samba (`map to guest = never`).
     * **Gestión de Credenciales:** Cambio inmediato de contraseñas por defecto en servicios administrativos.
@@ -131,7 +132,7 @@ El host fue comprometido debido a credenciales débiles y un kernel desactualiza
 2. **Hardening:** Cambio de contraseñas de Tomcat y restricción de acceso al panel por IP.
 3. **Remediación:** Actualización urgente del Kernel para mitigar vulnerabilidades de Race Condition.
 
-* **📁 [Informe Forense PDF](./defensa/04_samba/Samba_Forensics.md)** 
+* **📁 [Informe Forense PDF](./defensa/04_samba/Samba_Forensics.pdf)** * **📊 [Análisis OSINT VirusTotal (Dirty COW)](./defensa/04_samba/cow_vt.csv)**
 * **📦 Evidencia PCAP (Real Noise):** **[Descargar .tar.xz (Linux)](./evidence/intrusion.tar.xz)** | **[Descargar .zip (Windows)](./evidence/intrusion.zip)**
 
 ---
