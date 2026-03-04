@@ -130,7 +130,7 @@ El host fue comprometido debido a credenciales débiles y un kernel desactualiza
 2. **Hardening:** Cambio de contraseñas de Tomcat y restricción de acceso al panel por IP.
 3. **Remediación:** Actualización urgente del Kernel para mitigar vulnerabilidades de Race Condition.
 
-* **📁 [Informe Forense](./defensa/04_samba/md/Samba_Forensics.md)** * **📊 [Análisis OSINT VirusTotal (Dirty COW)](./defensa/04_samba/cow_vt.csv)**
+* **📁 [Informe Forense](./defensa/04_samba/md/Samba_Forensics.md)** * **📊 [Análisis OSINT VirusTotal (Dirty COW)](./defensa/04_samba/md/cow_vt.csv)**
 * **📦 Evidencia PCAP (Real Noise):** **[Descargar .tar.xz (Linux)](./evidence/04_samba/intrusion.tar.xz)** | **[Descargar .zip (Windows)](./evidence/04_samba/intrusion.zip)**
 
 ---
