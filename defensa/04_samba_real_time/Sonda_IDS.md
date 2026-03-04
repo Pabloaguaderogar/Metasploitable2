@@ -67,7 +67,7 @@ Finalmente, descartamos este escenario debido a un problema de enrutamiento asim
 
 * Complejidad de NAT
 
-# image.pngPRUEBA Sonda IDS (casera)
+# PRUEBA Sonda IDS (casera)
 Se implementó un algoritmo de ventana temporal (intervalo de integración de 1.0s) para diferenciar el tráfico interactivo legítimo de los sondeos automatizados. El ajuste del umbral de frecuencia (f>10 Hz) permitió filtrar el ruido generado por escaneos de versiones de Nmap (-sV), logrando una precisión superior al 90% en entornos con tráfico de fondo.
 Laznamos finalmente desde kali, modificando ligeramente. Obtenemos una primera alerta, aunque es un falso positivo (confundimos un escaneo de versiones con una shell interactiva)
 

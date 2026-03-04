@@ -56,7 +56,7 @@ def analyze_packet(pkt):
         current_time = time.time()
         if current_time - start_time > 1.0:
             if packet_count > 25: # Si en 1 seg hay más de 25 paquetes grandes
-                print(f"[{timestamp}] 🚀 ALERTA DE FLUJO: Ráfaga de datos detectada ({packet_count} pks)")
+                print(f"[{timestamp}] ALERTA DE FLUJO: Ráfaga de datos detectada ({packet_count} pks)")
             packet_count = 0
             start_time = current_time
 
