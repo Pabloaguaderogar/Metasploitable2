@@ -7,35 +7,24 @@ Este repositorio es una bitácora técnica de auditoría sobre un entorno **Meta
 .
 ### 📂 Estructura del Proyecto
 
-📁 **ataques/** # FASE OFENSIVA: Pentesting \
-├── 📁 **01_rpc/** # Vulnerabilidad NFS y RPCBind \
-│   ├── 📄 Ataque1_rpc.md \
-│   └── 📄 Ataque1_rpc.pdf \
-├── 📁 **02_bindshell/** # Shell en puerto 1524 \
-│   ├── 📄 Ataque_2_Bindshell.md \
-│   └── 📄 Ataque_2_Bindshell.pdf \
-├── 📁 **03_unrealircd/** # Backdoor Unreal3.2.8.1 \
-│   ├── 📄 Ataque_3_UnreallRCD.md \
-│   └── 📄 Ataque_3_UnreallRCD.pdf \
-└── 📁 **04_samba/** # Samba + Tomcat + Dirty COW \
-    ├── 📄 Samba.md \
-    └── 📄 Samba.pdf
-
-📁 **defensa/** # FASE DEFENSIVA: Blue Team \
-├── 📁 **01_rpc/** # Medidas preventivas NFS \
-│   └── 📄 Defensa1_antes_educerecer_cerrar_NFS.pdf \
-└── 📁 **04_samba/** # Análisis Post-Mortem y Forense \
-    ├── 📁 **md/** # Assets del informe técnico \
-    │   ├── 🖼️ (Capturas .png) \
-    │   └── 📄 Samba_Forensics.md \
-    ├── 📊 **cow_vt.csv** # Evidencia OSINT VirusTotal \
-    └── 📄 Samba_Forensics.pdf
-
-📁 **evidence/** # ARTEFACTOS FORENSES \
-├── 📦 intrusion.tar.xz \
-└── 📦 intrusion.zip \
-
-📄 **README.md** # Índice General
+.
+├── ataques/                 # FASE OFENSIVA: Pentesting & Exploitation
+│   ├── 01_rpc/              # Abuso de NFS y RPCBind
+│   ├── 02_bindshell/        # Shell persistente en puerto 1524
+│   ├── 03_unrealircd/       # Backdoor en Supply Chain (IRC)
+│   └── 04_samba/            # Explotación de Samba + Tomcat + Dirty COW
+├── defensa/                 # FASE DEFENSIVA: Blue Team & Engineering
+│   ├── 01_rpc/              # Hardening de servicios RPC (NFS)
+│   ├── 04_samba/            # Análisis Forense Post-Mortem (Wireshark)
+│   │   ├── md/              # Assets y capturas del informe
+│   │   └── Samba_Forensics.md
+│   └── 04_samba_real_time/  # INGENIERÍA DE DETECCIÓN: Sonda IDS Híbrida
+│       ├── alert.py         # Script de detección en Python (Scapy)
+│       └── Sonda_IDS.md     # Documentación técnica de la sonda y lógica
+├── evidence/                # ARTEFACTOS Y TRAZAS (PCAP)
+│   ├── 04_samba/            # Capturas del ataque completo (73MB)
+│   └── 04_samba_realtime/   # Trazas comprimidas para validación de IDS
+└── README.md
 
 ---
 
@@ -132,10 +121,34 @@ El host fue comprometido debido a credenciales débiles y un kernel desactualiza
 2. **Hardening:** Cambio de contraseñas de Tomcat y restricción de acceso al panel por IP.
 3. **Remediación:** Actualización urgente del Kernel para mitigar vulnerabilidades de Race Condition.
 
-* **📁 [Informe Forense PDF](./defensa/04_samba/Samba_Forensics.pdf)** * **📊 [Análisis OSINT VirusTotal (Dirty COW)](./defensa/04_samba/cow_vt.csv)**
-* **📦 Evidencia PCAP (Real Noise):** **[Descargar .tar.xz (Linux)](./evidence/intrusion.tar.xz)** | **[Descargar .zip (Windows)](./evidence/intrusion.zip)**
+* **📁 [Informe Forense](./defensa/04_samba/md/Samba_Forensics.md)** * **📊 [Análisis OSINT VirusTotal (Dirty COW)](./defensa/04_samba/cow_vt.csv)**
+* **📦 Evidencia PCAP (Real Noise):** **[Descargar .tar.xz (Linux)](./evidence/04_samba/intrusion.tar.xz)** | **[Descargar .zip (Windows)](./evidence/04_samba/intrusion.zip)**
 
 ---
 
-## 🚀 Próximos Pasos: Detección en Tiempo Real
-Como fase final del laboratorio, se desarrollará un script en Python (Scapy) para monitorizar el tráfico y generar alertas ante peticiones POST administrativas o conexiones sospechosas al puerto 4444.
+### 06. Sonda IDS Híbrida
+#### A. Evolución de Modelos (Alice, Bob & Charly)
+
+*   Alice (DPI): Detección de firmas estáticas. Efectiva pero vulnerable a variaciones.
+
+*    Bob (Volumetría): Detección de ráfagas simple. Alto ratio de falsos positivos con tráfico legítimo.
+
+*    Charly (Ventana Temporal): Implementación de un intervalo de integración de 3.0s. Logra diferenciar el tráfico humano interactivo de los escaneos automatizados basándose en la densidad de eventos (Hz).
+
+#### B. Capacidades Actuales
+
+1.    Lógica Volumétrica: Filtra ráfagas de Nmap y detecta actividad de terminal interactiva.
+
+2.    DPI de Ejecución: Alertas inmediatas ante el uso de gcc, ptrace, mmap, firefart y subidas de archivos .war.
+
+#### C. Lecciones Aprendidas y Roadmap
+
+1.    Enrutamiento Asimétrico: Se documentó el fallo en el escenario Kali-Charly-Bob, donde la falta de ruta de retorno impedía el sniffing bidireccional, optando por una monitorización en el host objetivo.
+
+2.    Limitaciones de Scapy: Se identificó que exfiltraciones masivas (>6 MB/s) pueden saturar el procesamiento en Python.
+
+3.    Mejora Propuesta: Migrar de métricas PPS (Paquetes por segundo) a BPS (Bytes por segundo) para detectar exfiltraciones pesadas fragmentadas.
+
+* **📁 Documentación de la Sonda(./defensa/04_samba_real_time/Sonda_IDS.md) | 🐍 Código Fuente(./defensa/04_samba_real_time/alert.py)**
+
+* **📦 Evidencia IDS (Real Time):** **[Descargar .tar.xz (Linux)](./evidence/04_samba_real_time/samba_real_time.tar.xz)** | **[Descargar .zip (Windows)](./evidence/04_samba_real_time/samba_real_time.zip)**
