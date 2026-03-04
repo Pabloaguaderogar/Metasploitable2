@@ -6,7 +6,7 @@
 Este repositorio es una bitácora técnica de auditoría sobre un entorno **Metasploitable 2**. No se limita a la explotación, sino que documenta el ciclo completo: **Reconocimiento -> Explotación -> Exfiltración -> Hardening (Defensa) -> Limpieza**.
 .
 ### 📂 Estructura del Proyecto
-
+```text
 .
 ├── ataques/                 # FASE OFENSIVA: Pentesting & Exploitation
 │   ├── 01_rpc/              # Abuso de NFS y RPCBind
@@ -24,8 +24,8 @@ Este repositorio es una bitácora técnica de auditoría sobre un entorno **Meta
 ├── evidence/                # ARTEFACTOS Y TRAZAS (PCAP)
 │   ├── 04_samba/            # Capturas del ataque completo (73MB)
 │   └── 04_samba_realtime/   # Trazas comprimidas para validación de IDS
-└── README.md
-
+└── README.md                # Índice General e hitos del proyecto
+```
 ---
 
 ### ⚙️ Metodología de Trabajo
@@ -49,6 +49,8 @@ Basado en la formación del **Google Cybersecurity Professional Certificate**, e
 * **Exfiltración:** Uso de `tar` para empaquetar `/home/msfadmin` y transferencia vía servidor HTTP temporal en Python.
 * **📁 [Informe Técnico Detallado](./ataques/01_rpc/Ataque1_rpc.md)**
 
+---
+
 ### 02. Bindshell en Puerto 1524: De la Explotación al Hardening
 * **Identificación:** Detección de `ingreslock` en el puerto **1524**.
 * **Vulnerabilidad:** Shell de root abierta por defecto (Backdoor).
@@ -68,6 +70,8 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
 * Restauración de archivos de sistema (`/etc/passwd`).
 * Limpieza selectiva del historial de comandos (`history -c`).
 
+---
+
 ### 03. UnrealIRCd: Supply Chain Attack & Análisis de Persistencia
 * **Identificación:** Banner Grabbing manual con `nc 192.168.56.101 6667`. Se identificó la versión **Unreal3.2.8.1**, conocida históricamente por contener un backdoor en su código fuente (CVE-2010-2075).
 * **Explotación:** 1. Uso del framework **Metasploit** (`exploit/unix/irc/unreal_ircd_3281_backdoor`).
@@ -77,6 +81,8 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
 * **Hardening y Lección Aprendida:** 1. Se demostró que un Firewall (`iptables`) reduce la superficie de ataque externa pero no elimina la vulnerabilidad intrínseca del software. 
     2. **Recomendación:** Actualización inmediata a una versión no comprometida o deshabilitación total del servicio si no es esencial para el negocio.
 * **📁 [Informe Técnico Detallado](./ataques/03_unrealircd/Ataque_3_UnreallRCD.md)**
+
+---
 
 ### 04. Samba & Tomcat: De la Exposición de Archivos al Ransomware Real
 * **Fase 1: Exposición SMB:** Se detectó un servicio Samba (3.0.20) con login anónimo permitido. Se verificó capacidad de **Escritura (R/W)** en el directorio `/tmp`, lo que permite el staging de malware y scripts de escalada.
@@ -89,6 +95,9 @@ Siguiendo estándares profesionales de auditoría, cada ataque incluye una fase 
     * **Gestión de Credenciales:** Cambio inmediato de contraseñas por defecto en servicios administrativos.
     * **Patch Management:** Actualización del Kernel para mitigar vulnerabilidades de tipo Race Condition.
 * **📁 [Código del Ransomware y Bitácora](./ataques/04_samba/Samba.md)**
+
+---
+
 ### 0.5 Análisis Forense del Caso 04 (Blue Team Focus)
 Para este análisis se utilizó el archivo `intrusion.pcap` (73 MB). El reto principal consistió en filtrar el ruido de red (tráfico HTTP de usuarios legítimos, ARP y broadcast) para aislar la actividad del atacante.
 
@@ -149,6 +158,6 @@ El host fue comprometido debido a credenciales débiles y un kernel desactualiza
 
 3.    Mejora Propuesta: Migrar de métricas PPS (Paquetes por segundo) a BPS (Bytes por segundo) para detectar exfiltraciones pesadas fragmentadas.
 
-* **📁 Documentación de la Sonda(./defensa/04_samba_real_time/Sonda_IDS.md) | 🐍 Código Fuente(./defensa/04_samba_real_time/alert.py)**
+* **📁 [Documentación de la Sonda](./defensa/04_samba_real_time/Sonda_IDS.md)** | **🐍 [Código Fuente](./defensa/04_samba_real_time/alert.py)**
 
 * **📦 Evidencia IDS (Real Time):** **[Descargar .tar.xz (Linux)](./evidence/04_samba_real_time/samba_real_time.tar.xz)** | **[Descargar .zip (Windows)](./evidence/04_samba_real_time/samba_real_time.zip)**
