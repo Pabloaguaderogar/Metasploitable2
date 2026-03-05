@@ -8,23 +8,44 @@ Este repositorio es una bitácora técnica de auditoría sobre un entorno **Meta
 ### 📂 Estructura del Proyecto
 ```text
 .
-├── ataques/                 # FASE OFENSIVA: Pentesting & Exploitation
-│   ├── 01_rpc/              # Abuso de NFS y RPCBind
-│   ├── 02_bindshell/        # Shell persistente en puerto 1524
-│   ├── 03_unrealircd/       # Backdoor en Supply Chain (IRC)
-│   └── 04_samba/            # Explotación de Samba + Tomcat + Dirty COW
-├── defensa/                 # FASE DEFENSIVA: Blue Team & Engineering
-│   ├── 01_rpc/              # Hardening de servicios RPC (NFS)
-│   ├── 04_samba/            # Análisis Forense Post-Mortem (Wireshark)
-│   │   ├── md/              # Assets y capturas del informe
-│   │   └── Samba_Forensics.md
-│   └── 04_samba_real_time/  # INGENIERÍA DE DETECCIÓN: Sonda IDS Híbrida
-│       ├── alert.py         # Script de detección en Python (Scapy)
-│       └── Sonda_IDS.md     # Documentación técnica de la sonda y lógica
-├── evidence/                # ARTEFACTOS Y TRAZAS (PCAP)
-│   ├── 04_samba/            # Capturas del ataque completo (73MB)
-│   └── 04_samba_realtime/   # Trazas comprimidas para validación de IDS
-└── README.md                # Índice General e hitos del proyecto
+├── ataques/                    # FASE OFENSIVA: Documentación de vectores de entrada y explotación
+│   ├── 01_rpc/                 # Abuso de NFS/RPC para escalada de privilegios
+│   │   ├── Ataque1_rpc.md
+│   │   └── Ataque1_rpc.pdf
+│   ├── 02_bindshell/           # Explotación de shells persistentes (Backdoors)
+│   │   ├── Ataque_2_Bindshell.md
+│   │   └── Ataque_2_Bindshell.pdf
+│   ├── 03_unrealircd/          # Análisis de Supply Chain Attack (CVE-2010-2075)
+│   │   ├── Ataque_3_UnreallRCD.md
+│   │   └── Ataque_3_UnreallRCD.pdf
+│   └── 04_samba/               # Cadena compleja: Samba + Tomcat + Dirty COW + Ransomware
+│       ├── Samba.md
+│       └── Samba.pdf
+├── defensa/                    # FASE DEFENSIVA: Ingeniería, Hardening y Respuesta ante Incidentes
+│   ├── 01_rpc/                 # Medidas de mitigación y cierre de puertos críticos
+│   │   └── Defensa1_antes_educerecer_cerrar_NFS.pdf
+│   ├── 04_samba/               # ANÁLISIS FORENSE POST-MORTEM (Wireshark Focus)
+│   │   ├── md/                 # Artefactos visuales y OSINT (VirusTotal)
+│   │   │   ├── cow_vt.csv      # Análisis de hashes del exploit Dirty COW
+│   │   │   └── ... (.png)      # Capturas de flujos TCP y evidencias de intrusión
+│   │   ├── Samba_Forensics.md  # Informe detallado del compromiso de Tomcat y Samba
+│   │   └── Samba_Forensics.pdf
+│   └── 04_samba_real_time/     # INGENIERÍA DE DETECCIÓN (Sonda Híbrida)
+│       ├── 04_samba_analysis/  # DATA SCIENCE: Análisis avanzado con Python/Pandas
+│       │   ├── Analisis_pcap.ipynb # Notebook con modelo estadístico 3-sigma 
+│       │   ├── Analisis_pcap.md    
+│       │   └── output_... (.png)   # Gráficas de baseline, anomalías y Kill Chain sincronizada
+│       ├── alert.py            # Sonda en tiempo real (Scapy): Motor de DPI y Volumetría
+│       ├── Sonda_IDS.md        # Especificaciones del motor de detección (Modelos Alice, Bob, Charly)
+│       └── ... (.png)          # Capturas de la sonda en ejecución detectando 'firefart' y '.war'
+├── evidence/                   # TRAZABILIDAD: Capturas de tráfico bruto (PCAP) para auditoría
+│   ├── 04_samba/               # Tráfico de la intrusión completa (73MB)
+│   │   ├── intrusion.tar.xz
+│   │   └── intrusion.zip
+│   └── 04_samba_realtime/      # Tráfico específico para validación de la Sonda IDS
+│       ├── samba_real_time.tar.xz
+│       └── samba_real_time.zip
+└── README.md                   # ÍNDICE GENERAL: Metodología, hitos y resumen ejecutivo            # Índice General e hitos del proyecto
 ```
 ---
 
@@ -161,3 +182,36 @@ El host fue comprometido debido a credenciales débiles y un kernel desactualiza
 * **📁 [Documentación de la Sonda](./defensa/04_samba_real_time/Sonda_IDS.md)** | **🐍 [Código Fuente](./defensa/04_samba_real_time/alert.py)**
 
 * **📦 Evidencia IDS (Real Time):** **[Descargar .tar.xz (Linux)](./evidence/04_samba_real_time/samba_real_time.tar.xz)** | **[Descargar .zip (Windows)](./evidence/04_samba_real_time/samba_real_time.zip)**
+
+---
+
+### 07. Sonda IDS Híbrida: Análisis Estadístico y Correlación Temporal
+
+Para elevar la capacidad de detección, se ha desarrollado un motor de análisis post-captura en **Python (Pandas/Matplotlib)** que correlaciona la telemetría de red con los logs de la sonda IDS.
+
+#### A. Modelo de Detección Estadística (Baseline vs. Anomalía)
+A diferencia de los umbrales estáticos, se ha implementado un modelo basado en **Física Estadística**:
+* **Baseline dinámico:** Cálculo de la media y desviación estándar ($\sigma$) del tráfico en condiciones normales.
+* **Criterio de Detección ($3\sigma$):** Aplicación de la regla empírica para identificar anomalías con un **99.7% de confianza estadística**. Esto permite ignorar el "ruido" de red y centrar la alerta en ráfagas reales de ataque.
+* **Escalabilidad Logarítmica:** Visualización en escala logarítmica para detectar simultáneamente exfiltraciones masivas (3000 PPS) y persistencia silenciosa (10 PPS).
+
+#### B. Correlación de la Kill Chain (Cadena de Ataque)
+Mediante una **sincronización multicapa**, se han mapeado los eventos detectados por la sonda (DPI) sobre el flujo de paquetes del PCAP:
+
+1. **Reconocimiento (Escaneo Nmap):** Identificado por ráfagas interactivas iniciales. Se filtran handshakes vacíos para optimizar la CPU de la sonda.
+2. **Acceso Inicial (`.war`):** Correlación exacta entre el pico de tráfico HTTP y la firma de DPI de subida de artefactos.
+3. **Escalada de Privilegios (`gcc` / `firefart`):** Detección de la fase de compilación in-situ y ejecución del exploit mediante inspección de strings en el payload.
+4. **Control Total y Exfiltración:** Los picos finales de tráfico confirman la toma de control del atacante y la preparación de los datos para su salida.
+
+
+
+#### C. Resultados del Análisis Forense Integrado
+
+| Métrica | Valor Obtenido | Significado Forense |
+| :--- | :--- | :--- |
+| **Media Baseline** | 14.22 PPS | Tráfico normal de mantenimiento del servidor. |
+| **Umbral Anomalía ($3\sigma$)** | 45.10 PPS | Límite superior de ruido; cualquier superación es incidente. |
+| **Pico de Exfiltración** | **3102.0 PPS** | Momento exacto del compromiso de datos. |
+| **Detección DPI** | 100% Match | Correlación total entre anomalía estadística y firma maliciosa. |
+
+* **📁 [Notebook de Análisis (Pandas)](./defensa/04_samba_real_time/04_samba_analysis/Analisis_pcap.ipynb)** * **🐍 [Lógica de la Sonda](./defensa/04_samba_real_time/alert.py)**
