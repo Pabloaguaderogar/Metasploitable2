@@ -215,3 +215,17 @@ Mediante una **sincronización multicapa**, se han mapeado los eventos detectado
 | **Detección DPI** | 100% Match | Correlación total entre anomalía estadística y firma maliciosa. |
 
 * **📁 [Notebook de Análisis (Pandas)](./defensa/04_samba_real_time/04_samba_analysis/Analisis_pcap.ipynb)** * **🐍 [Lógica de la Sonda](./defensa/04_samba_real_time/alert.py)**
+
+---
+
+## 🚀 Próximos Pasos y Roadmap de Desarrollo
+
+Este repositorio se encuentra en fase activa de desarrollo. Los hitos planteados para las próximas iteraciones incluyen:
+
+### Evolución hacia Machine Learning (ML-IDS)
+* **Modelado No Supervisado:** Desarrollo de un modelo basado en **Isolation Forest** para la detección de anomalías "Zero-Day" que no dependen de firmas estáticas.
+* **Evaluación de Métricas:** Análisis de precisión y *recall* enfocado en la minimización de falsos negativos en entornos críticos.
+
+
+---
+**Nota:** Este laboratorio es un proyecto personal en constante evolución técnica.
